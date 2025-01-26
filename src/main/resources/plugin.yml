@@ -1,0 +1,6 @@
+name: GunGame
+version: '${project.version}'
+main: at.flori4n.gungame.GunGame
+commands:
+  gungame:
+    description: -;

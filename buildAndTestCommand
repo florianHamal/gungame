@@ -1,0 +1,1 @@
+mvn package ; cp target\GunGame-1.0.jar testServer\plugins ; cd testServer ; C:\"Program Files"\"Eclipse Adoptium"\jre-8.0.402.6-hotspot\bin\java.exe -jar paper-1.8.8-445.jar ; cd ..
