@@ -8,12 +8,10 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.*;
 
 public class Listeners implements Listener {
     private GunGameData gunGameData = GunGameData.getInstance();
@@ -78,5 +76,9 @@ public class Listeners implements Listener {
     public void onPlayerMove(PlayerMoveEvent e) {
         Material m = e.getPlayer().getLocation().getBlock().getType();
         if (m == Material.WATER||m==Material.STATIONARY_WATER) e.getPlayer().setHealth(0);
+    }
+    @EventHandler
+    public void onItemDrop(PlayerDropItemEvent e){
+        e.setCancelled(true);
     }
 }

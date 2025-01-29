@@ -54,6 +54,9 @@ public class Commands implements CommandExecutor {
                 case "setSpawnProt":
                     gunGameData.setSpawnProtRadius(Integer.parseInt(strings[1]));
                     break;
+                case "setStart":
+                    GunGame.getPlugin().getConfig().set("start",Boolean.valueOf(strings[1]));
+                    break;
                 default:
                     player.sendMessage("wrong Command");
             }

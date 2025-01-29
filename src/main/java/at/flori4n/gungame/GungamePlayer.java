@@ -23,13 +23,17 @@ public class GungamePlayer {
         gunGameData.getKits().get(lvl).applyKit(player);
     }
     public void equip(){
+        //-1 cuz indexing starts at 0
         gunGameData.getKits().get(lvl-1).applyKit(player);
         player.sendMessage("Du bist jetzt Lvl "+ChatColor.GOLD+lvl);
         //player.setExp(calcXPLevels(lvl));
         player.setLevel(lvl);
     }
     public void lvlUp(){
-        if (lvl<gunGameData.getKits().size())lvl++;
+        if (gunGameData.getKits().size()<lvl+1)
+            GunGame.getPlugin().endGame(this);
+        else
+            lvl++;
     }
     public void lvlDown(){
         if (lvl>1)lvl--;
