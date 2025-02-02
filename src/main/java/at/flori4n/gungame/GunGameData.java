@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class GunGameData {
     private static GunGameData instance;
@@ -19,11 +20,8 @@ public class GunGameData {
     private List<Kit> kits = new ArrayList<>();
     private List<GungamePlayer> players = new ArrayList<>();
     @Getter
-    @Setter
-    private Location spawn;
-    @Getter
-    @Setter
-    private int spawnProtRadius;
+    private List<Location> spawns = new ArrayList<>();
+    private Random random = new Random();
 
     private GunGameData(){
         readConf();
@@ -31,12 +29,19 @@ public class GunGameData {
 
     private void readConf(){
         FileConfiguration config = GunGame.getPlugin().getConfig();
-        spawn = (Location) config.get("spawn");
-        spawnProtRadius = config.getInt("spawnProtRadius");
-        ConfigurationSection section = config.getConfigurationSection("kits");
-        if(section==null)return;
-        for (String s:section.getKeys(false)){
-            ConfigurationSection kitSelection = section.getConfigurationSection(s);
+        //if (!config.getBoolean("start"))return;
+
+        //for some reason spring can only read a list of spawns from a section
+        if (config.getConfigurationSection("spawn")!=null){
+            this.spawns.addAll(
+                    (List<Location>) config.getConfigurationSection("spawn").getList("spawns")
+            );
+        }
+
+        ConfigurationSection kitSection = config.getConfigurationSection("kits");
+        if(kitSection==null)return;
+        for (String s:kitSection.getKeys(false)){
+            ConfigurationSection kitSelection = kitSection.getConfigurationSection(s);
             Kit kit = new Kit();
             ConfigurationSection itemSelection = kitSelection.getConfigurationSection("items");
             ItemStack[] items = new ItemStack[itemSelection.getKeys(false).size()];
@@ -54,29 +59,39 @@ public class GunGameData {
             kits.add(kit);
         }
     }
+
+
+
+
+
     public void writeConf(){
         FileConfiguration config = GunGame.getPlugin().getConfig();
+
+        //for some reason spring can only read a list of spawns from a section
+        config.createSection("spawn").set("spawns",spawns);
+        ConfigurationSection spawnSection = config.createSection("spawns");
+        for (int i = 0; i<spawns.size();i++){
+            spawnSection.set("spawn"+i,spawns.get(i));
+        }
+
+
         ConfigurationSection section = config.createSection("kits");
-        config.set("spawn",spawn);
-        config.set("spawnProtRadius",spawnProtRadius);
-        int index = 0;
-        for (Kit kit : kits){
-            ConfigurationSection kitSection = section.createSection(String.valueOf(index));
-            System.out.println(kit.getInvContents().length);
+        for (int i = 0; i<kits.size();i++){
+            ConfigurationSection kitSection = section.createSection("kit"+i);
+            Kit kit = kits.get(i);
             ConfigurationSection itemSection= kitSection.createSection("items");
-            for (int i = 0; i<kit.getInvContents().length;i++){
+            for (int j = 0; j<kit.getInvContents().length;j++){
                 System.out.println("loopTest");
-                if(kit.getInvContents()[i]!=null){
-                    itemSection.set("item"+i,kit.getInvContents()[i]);
+                if(kit.getInvContents()[j]!=null){
+                    itemSection.set("item"+j,kit.getInvContents()[j]);
                 }else {
-                    itemSection.set("item"+i,"-");
+                    itemSection.set("item"+j,"-");
                 }
             }
             ConfigurationSection armorSection = kitSection.createSection("armor");
-            for (int i = 0; i<kit.getArmorContents().length;i++){
-                armorSection.set("armor"+i,kit.getArmorContents()[i]);
+            for (int j = 0; j<kit.getArmorContents().length;j++){
+                armorSection.set("armor"+j,kit.getArmorContents()[j]);
             }
-            index++;
         }
         GunGame.getPlugin().saveConfig();
     }
@@ -110,12 +125,9 @@ public class GunGameData {
                 .get();
     }
 
-
-    private void initKits(){
-        kits = new ArrayList<>();
-
+    public Location getRandomSpawn(){
+        return spawns.get(random.nextInt(spawns.size()));
     }
-
 
     public static GunGameData getInstance() {
         if (instance == null) instance = new GunGameData();

@@ -18,7 +18,8 @@ public final class GunGame extends JavaPlugin {
     public void onEnable() {
         instance = this;
         getCommand("gungame").setExecutor(new Commands());
-        this.getConfig().addDefault("start","false");
+        getConfig().addDefault("start","false");
+        saveConfig();
         if (this.getConfig().getBoolean("start")){
             listeners= new Listeners();
             Bukkit.getPluginManager().registerEvents(listeners,this);
@@ -38,7 +39,7 @@ public final class GunGame extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new GameOverListener(),this);
 
         for(Player player : Bukkit.getOnlinePlayers()){
-            player.sendTitle(new Title(ChatColor.MAGIC+winner.getPlayer().getDisplayName(),"hat gewonnen"));
+            player.sendTitle(new Title(ChatColor.GOLD+winner.getPlayer().getDisplayName(),"hat gewonnen"));
         }
         Bukkit.getScheduler().scheduleSyncDelayedTask(instance,new Runnable(){
             @Override

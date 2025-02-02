@@ -48,14 +48,12 @@ public class Commands implements CommandExecutor {
                     kit.setInvContents(player.getInventory().getContents());
                     kit.setArmorContents(player.getInventory().getArmorContents());
                     break;
-                case "setSpawn":
-                    gunGameData.setSpawn(player.getLocation());
-                    break;
-                case "setSpawnProt":
-                    gunGameData.setSpawnProtRadius(Integer.parseInt(strings[1]));
+                case "addSpawn":
+                    gunGameData.getSpawns().add(player.getLocation());
                     break;
                 case "setStart":
                     GunGame.getPlugin().getConfig().set("start",Boolean.valueOf(strings[1]));
+                    //GunGame.getPlugin().saveConfig();
                     break;
                 default:
                     player.sendMessage("wrong Command");

@@ -20,7 +20,7 @@ public class Listeners implements Listener {
         gunGameData.addPlayer(
                 new GungamePlayer(e.getPlayer())
         );
-        e.getPlayer().teleport(gunGameData.getSpawn());
+        e.getPlayer().teleport(gunGameData.getRandomSpawn());
     }
     @EventHandler
     public void PlayerQuit(PlayerQuitEvent e) {
@@ -43,7 +43,8 @@ public class Listeners implements Listener {
         Bukkit.getScheduler().scheduleSyncDelayedTask(GunGame.getPlugin(), () -> {
             player.getPlayer().spigot().respawn();
             player.equip();
-            player.getPlayer().teleport(gunGameData.getSpawn());
+            player.getPlayer().teleport(gunGameData.getRandomSpawn());
+            System.out.println(gunGameData.getSpawns().size());
         },2);
     }
     @EventHandler
@@ -51,32 +52,9 @@ public class Listeners implements Listener {
         if (!(e.getEntity() instanceof Player && e.getDamager() instanceof Player))return;
         GungamePlayer player = gunGameData.getGungamePlayer((Player) e.getEntity());
         GungamePlayer damager = gunGameData.getGungamePlayer((Player) e.getDamager());
-        if (isInSpawn(player.getPlayer()) || isInSpawn(damager.getPlayer())){
-            e.setCancelled(true);
-            return;
-        }
         player.setLastDamager(damager);
     }
-    private boolean isInSpawn(Player e){
-        Location spawnLoc = gunGameData.getSpawn();
-        Location entityLoc = e.getLocation();
-        int radius = gunGameData.getSpawnProtRadius();
 
-        if ((entityLoc.getX()>spawnLoc.getX() - radius) &&
-                (entityLoc.getX()<spawnLoc.getX() + radius) &&
-                (entityLoc.getZ()>spawnLoc.getZ() - radius) &&
-                (entityLoc.getZ()<spawnLoc.getZ() + radius))
-        {
-            return true;
-        }
-
-        return false;
-    }
-    @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e) {
-        Material m = e.getPlayer().getLocation().getBlock().getType();
-        if (m == Material.WATER||m==Material.STATIONARY_WATER) e.getPlayer().setHealth(0);
-    }
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent e){
         e.setCancelled(true);
