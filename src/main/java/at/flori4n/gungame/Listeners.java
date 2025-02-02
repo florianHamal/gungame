@@ -10,8 +10,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.weather.WeatherChangeEvent;
 
 public class Listeners implements Listener {
     private GunGameData gunGameData = GunGameData.getInstance();
@@ -57,6 +59,19 @@ public class Listeners implements Listener {
 
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent e){
+        e.setCancelled(true);
+    }
+    @EventHandler
+    public void weatherChangeListener(WeatherChangeEvent e){
+        e.setCancelled(true);
+        e.getWorld().setThundering(false);
+    }
+    @EventHandler
+    public void blockBreakListener(BlockBreakEvent e){
+        e.setCancelled(true);
+    }
+    @EventHandler
+    public void foodListener(FoodLevelChangeEvent e){
         e.setCancelled(true);
     }
 }
