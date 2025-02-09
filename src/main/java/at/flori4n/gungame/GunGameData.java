@@ -3,16 +3,21 @@ package at.flori4n.gungame;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GunGameData {
     private static GunGameData instance;
@@ -44,8 +49,7 @@ public class GunGameData {
             ConfigurationSection kitSelection = kitSection.getConfigurationSection(s);
             Kit kit = new Kit();
             ConfigurationSection itemSelection = kitSelection.getConfigurationSection("items");
-            ItemStack[] items = new ItemStack[itemSelection.getKeys(false).size()];
-            System.out.println(itemSelection.getKeys(false).size());
+            ItemStack[] items = new ItemStack[itemSelection.getKeys(false).size()];;
             for (int i = 0; i< items.length;i++){
                 items[i] = itemSelection.getItemStack("item"+i);
             }
@@ -81,7 +85,6 @@ public class GunGameData {
             Kit kit = kits.get(i);
             ConfigurationSection itemSection= kitSection.createSection("items");
             for (int j = 0; j<kit.getInvContents().length;j++){
-                System.out.println("loopTest");
                 if(kit.getInvContents()[j]!=null){
                     itemSection.set("item"+j,kit.getInvContents()[j]);
                 }else {
@@ -133,5 +136,27 @@ public class GunGameData {
         if (instance == null) instance = new GunGameData();
         return instance;
 
+    }
+
+    public void updateAllScoreboards(){
+        Scoreboard scoreboard = generateScoreboard();
+        for (Player player: Bukkit.getOnlinePlayers()){
+            player.setScoreboard(scoreboard);
+        }
+    }
+
+
+    public Scoreboard generateScoreboard(){
+        Scoreboard board = Bukkit.getScoreboardManager().getNewScoreboard();
+        Objective obj = board.registerNewObjective("§4 Top Players", "");
+        obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        List<GungamePlayer> sortedPlayers = players.stream().sorted(Comparator.comparing(GungamePlayer::getLvl)).collect(Collectors.toList());
+
+        for (GungamePlayer player:sortedPlayers){
+            Score sc = obj.getScore(player.getPlayer().getName());
+            sc.setScore(player.getLvl());
+        }
+        return board;
     }
 }

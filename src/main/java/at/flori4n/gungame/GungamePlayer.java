@@ -4,8 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+
+import java.awt.*;
 
 public class GungamePlayer {
     GunGameData gunGameData = GunGameData.getInstance();
@@ -28,14 +32,17 @@ public class GungamePlayer {
         player.sendMessage("Du bist jetzt Lvl "+ChatColor.GOLD+lvl);
         //player.setExp(calcXPLevels(lvl));
         player.setLevel(lvl);
+        Bukkit.getPluginManager().callEvent(new PlayerPickupItemEvent(player.getPlayer(), null, Event.ACTION_EVENT));
     }
     public void lvlUp(){
         if (gunGameData.getKits().size()<lvl+1)
             GunGame.getPlugin().endGame(this);
         else
             lvl++;
+        gunGameData.updateAllScoreboards();
     }
     public void lvlDown(){
         if (lvl>1)lvl--;
+        gunGameData.updateAllScoreboards();
     }
 }
