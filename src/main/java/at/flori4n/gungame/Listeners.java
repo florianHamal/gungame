@@ -48,7 +48,7 @@ public class Listeners implements Listener {
             player.equip();
             player.getPlayer().teleport(gunGameData.getRandomSpawn());
             System.out.println(gunGameData.getSpawns().size());
-        },2);
+        },1);
     }
     @EventHandler
     public void EntityDamage(EntityDamageByEntityEvent e) {
