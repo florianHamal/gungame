@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -51,10 +52,19 @@ public class Listeners implements Listener {
     }
     @EventHandler
     public void EntityDamage(EntityDamageByEntityEvent e) {
-        if (!(e.getEntity() instanceof Player && e.getDamager() instanceof Player))return;
+        if (!(e.getEntity() instanceof Player))return;
         GungamePlayer player = gunGameData.getGungamePlayer((Player) e.getEntity());
-        GungamePlayer damager = gunGameData.getGungamePlayer((Player) e.getDamager());
-        player.setLastDamager(damager);
+        if (e.getDamager() instanceof Projectile){
+            Projectile p = (Projectile) e.getDamager();
+            if (p.getShooter() instanceof Player){
+                GungamePlayer damager = gunGameData.getGungamePlayer((Player) p.getShooter());
+                player.setLastDamager(damager);
+            }
+        }else if (e.getDamager() instanceof Player){
+            GungamePlayer damager = gunGameData.getGungamePlayer((Player) e.getDamager());
+            player.setLastDamager(damager);
+        }
+
     }
 
     @EventHandler
