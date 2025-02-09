@@ -31,6 +31,7 @@ public class Listeners implements Listener {
                 new GungamePlayer(e.getPlayer())
         );
         e.getPlayer().teleport(gunGameData.getRandomSpawn());
+        gunGameData.updateAllScoreboards();
     }
     @EventHandler
     public void PlayerQuit(PlayerQuitEvent e) {
