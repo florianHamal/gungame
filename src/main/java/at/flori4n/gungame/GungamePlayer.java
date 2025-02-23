@@ -35,14 +35,24 @@ public class GungamePlayer {
         Bukkit.getPluginManager().callEvent(new PlayerPickupItemEvent(player.getPlayer(), null, Event.ACTION_EVENT));
     }
     public void lvlUp(){
-        if (gunGameData.getKits().size()<lvl+1)
+        if (gunGameData.getKits().size()<lvl+1){
             GunGame.getPlugin().endGame(this);
-        else
-            lvl++;
+            return;
+        }
+        lvl++;
+        double health = player.getHealth();
+            health+=6;
+            if (health>20) {
+                health=20;
+            }
+        player.setHealth(health);
+        equip();
         gunGameData.updateAllScoreboards();
     }
+
     public void lvlDown(){
         if (lvl>1)lvl--;
+        equip();
         gunGameData.updateAllScoreboards();
     }
 }

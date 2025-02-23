@@ -44,14 +44,13 @@ public class Listeners implements Listener {
         //setNewLvl
         if (damager!=null){
             damager.lvlUp();
-            damager.equip();
         }
+
         player.setLastDamager(null);
         player.lvlDown();
         //auto respawn
         Bukkit.getScheduler().scheduleSyncDelayedTask(GunGame.getPlugin(), () -> {
             player.getPlayer().spigot().respawn();
-            player.equip();
             player.getPlayer().teleport(gunGameData.getRandomSpawn());
         },1);
     }
